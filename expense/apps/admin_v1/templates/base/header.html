@@ -1,0 +1,47 @@
+{% load static %}
+<header class="main-header">
+  <!-- Logo -->
+  <a class="logo">
+    <span class="logo-mini"><b>0</b></span>
+    <span class="logo-lg"><b>Tobeyoungagain</b></span>
+  </a>
+  <nav class="navbar navbar-static-top">
+    <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+      <span class="sr-only"></span>
+    </a>
+
+    <div class="navbar-custom-menu">
+      <ul class="nav navbar-nav">
+        <li class="dropdown user user-menu">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <img src="{% static 'image/avatar.jpg' %}" class="user-image" alt="User Image">
+            <span class="hidden-xs">
+              {% if request.user.is_superuser %}
+              SuperAdmin
+              {% else %}
+                {{ request.user.userprofile.name }}
+              {% endif %}
+            </span>
+          </a>
+          <ul class="dropdown-menu">
+            <!-- User image -->
+            <li class="user-header">
+              <img src="{% static 'image/avatar.jpg' %}" class="img-circle" alt="User Image">
+              <p>
+                SuperAdmin
+              </p>
+            </li>
+            <li class="user-footer">
+              <div class="pull-left">
+                <a href="#" class="btn btn-default btn-flat">Profile</a>
+              </div>
+              <div class="pull-right">
+                <a href="{% url 'admin_v1:logout' %}" class="btn btn-default btn-flat">Sign out</a>
+              </div>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>

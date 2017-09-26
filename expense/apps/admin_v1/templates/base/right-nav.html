@@ -1,0 +1,46 @@
+{% load static %}
+<aside class="main-sidebar">
+  <!-- sidebar: style can be found in sidebar.less -->
+  <section class="sidebar">
+    <div class="user-panel">
+      <div class="pull-left image">
+        <img src="{% static 'image/avatar.jpg' %}" class="img-circle" alt="User Image">
+      </div>
+      <div class="pull-left info">
+        <p>{% if request.user.is_superuser %}
+              SuperAdmin
+              {% else %}
+                {{ request.user.userprofile.name }}
+              {% endif %}</p>
+        <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+      </div>
+    </div>
+    <ul class="sidebar-menu">
+      {{TES}}
+      <li class="header">Tobeyuongagain</li>
+      {% for tab in TAB_CONSTANTS %}
+      <li class="{% if tab.name == parent_tab %} active {% endif %} treeview">
+        <a href="#">
+          <i class="fa fa-dashboard"></i> <span>{{tab.name}}</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class="treeview-menu">
+          {% for tab_child in tab.childs %}
+          <li {% if tab_child.0 == active_tab %} class="active" {% endif %} >
+            {% if tab_child.3 %}
+              <a href="{% url tab_child.2 group_id=tab_child.3.group_id%}"><i class="fa fa-circle-o"></i>{{tab_child.1}}</a>
+            {% else %}
+              <a href="{% url tab_child.2 %}"><i class="fa fa-circle-o"></i>{{tab_child.1}}</a>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </li>
+      {% endfor %}
+
+    </ul>
+  </section>
+  <!-- /.sidebar -->
+</aside>

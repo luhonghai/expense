@@ -1,0 +1,157 @@
+{% extends 'base/base.html' %}
+{% load ticket %}
+{% load humanize %}
+{% load time_converter %}
+{% block page-title %}
+  <h1>
+    Profile Detail
+  </h1>
+  {% endblock %}
+{% block pagecontent %}
+<section class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box box-solid">
+        <div class="box-header with-border">
+          <i class="fa fa-text-width"></i>
+
+          <h3 class="box-title">User Profile Detail</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <div class="col-md-6">
+            <dl>
+              <dt>Name</dt>
+              <dd>{{user_profile.name}}</dd>
+              <dt>Phone Number</dt>
+              <dd>{{user_profile.phone_number}}</dd>
+            </dl>
+          </div>
+          <div class="col-md-6">
+            <dl>
+              <dt>Credit</dt>
+              <dd>{{ user_profile.account_balance|floatformat:"0"|intcomma }} VND</dd>
+            </dl>
+          </div>
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box">
+        <div class="box-header">
+          <h3 class="box-title">Transaction History</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="dataTables_length" id="example1_length"><label>Show
+                  <form action="." method="get" style="display: inline">
+                  <select name="paginate_by" aria-controls="example1" class="form-control input-sm" onchange="this.form.submit()">
+                    {% for page_size in page_size_list %}
+                    <option {% if paginate_by == page_size %} selected {% endif %}value="{{ page_size }}">{{ page_size }}</option>
+                    {% endfor %}
+                  </select></form> entries</label>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div id="example1_filter" class="dataTables_filter">
+                  <label>Search:
+                    <form style="display: inline" action="{% url 'admin_v1:profile_detail' user_id=user_id%}" method="get">
+                      <input type="search" name="search_key" value="{{ request.GET.search_key }}"class="form-control input-sm" placeholder="" aria-controls="example1">
+                    </form>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12">
+                <table id="example1" class="table table-bordered table-striped dataTable" role="grid"
+                       aria-describedby="example1_info">
+                  <thead>
+                  <tr role="row">
+                    {% for header in header_texts %}
+                    <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
+                        aria-label="Rendering engine: activate to sort column descending" aria-sort="ascending"
+                    >{{ header }}
+                    </th>
+                    {% endfor %}
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {% for transaction in transactions %}
+                  <tr role="row">
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ transaction.amount|floatformat:"0"|intcomma}} VND</td>
+                    <td>{{ transaction.description}}</td>
+                    <td>{{ transaction.status|format_transaction_status}}</td>
+                    <td>{{ transaction.created_at|display_local }}</td>
+                  </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-5">
+                <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">
+                  Showing {{ page_obj.start_index }} to {{ page_obj.end_index}} of {{page_obj.paginator.count}} entries
+                </div>
+              </div>
+              {% if is_paginated %}
+              <div class="col-sm-7">
+                <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
+                  <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                    <li class="paginate_button previous" id="example1_previous">
+                      <a
+                        href="{% url 'admin_v1:profile_detail' user_id=user_id%}?page={{ page_obj.previous_page_number }}
+                        {% if request.GET.search_key %}&search_key={{ request.GET.search_key }}{% endif %}"
+                        aria-controls="example1" data-dt-idx="0" tabindex="0">Previous</a></li>
+                    {% endif %}
+                    {% for page in page_obj.paginator.page_range %}
+                      {% if forloop.counter != 1 %} {% endif %}
+                      <li class="paginate_button {% if page == page_obj.number %}active {% endif %}">
+                        <a href="?page={{page}}{% if request.GET.search_key %}&search_key={{ request.GET.search_key }}{% endif %}" aria-controls="example1" data-dt-idx="1" tabindex="0">{{ page }}</a>
+                      </li>
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <li class="paginate_button next" id="example1_next">
+                      <a href="{% url 'admin_v1:profile_detail' user_id=user_id%}?page={{ page_obj.next_page_number }}
+                      {% if request.GET.search_key %}&search_key={{ request.GET.search_key }}{% endif %}"
+                         aria-controls="example1"
+                         data-dt-idx="7"
+                         tabindex="0">Next
+                      </a></li>
+                    {% endif %}
+                  </ul>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+    </div>
+    <!-- /.col -->
+  </div>
+  <!-- /.row -->
+</section>
+{% endblock %}
+{% block javascript %}
+<script>
+  $(function () {
+    $('input[type="checkbox"].flat-green, input[type="radio"].flat-green').iCheck({
+      checkboxClass: 'icheckbox_flat-green',
+      radioClass: 'iradio_flat-green'
+    });
+  })
+</script>
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends 'base/base.html' %}
+{% load ticket %}
+{% load humanize %}
+{% block pagecontent %}
+<section class="content">
+  <div class="row">
+    <div class="col-xs-12">
+      <!-- general form elements -->
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Event Detail</h3>
+        </div>
+        <!-- /.box-header -->
+        <!-- form start -->
+        <form class="form-horizontal" method="post">
+          {% csrf_token %}
+          <div class="box-body">
+            <input type="text" class="form-control hidden" name="event_id" value="{{event.id}}">
+            <input type="text" class="form-control hidden" name="group_id" value="{{group_id}}">
+            <div class="form-group {% if event.description_error_message %}has-error {% endif %}">
+              <label class="col-sm-2 control-label">Desciption</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" placeholder="Enter description" name="description" value="{{event.description}}">
+                <span class="help-block">{{event.description_error_message}}</span>
+              </div>
+            </div>
+            <div class="form-group {% if event.event_type_error_message %}has-error {% endif %}">
+              <label class="col-sm-2 control-label">Event Type</label>
+              <div class="col-sm-2">
+                <select name="event_type" class="form-control select2 select2-hidden-accessible" tabindex="-1" aria-hidden="true"">
+                  {% for status in event_types %}
+                    <option {% if status.0 == event.event_type %} selected {%endif%} value="{{status.0}}">{{status.1}}</option>
+                  {% endfor %}
+                </select>
+                <span class="help-block">{{event.event_type_error_message}}</span>
+              </div>
+            </div>
+            <div class="form-group {% if event.source_money_error_message %}has-error {% endif %}">
+              <label class="col-sm-2 control-label">Source Money</label>
+              <div class="col-sm-2">
+                <select name="source_money" class="form-control select2 select2-hidden-accessible" tabindex="-1" aria-hidden="true"">
+                  {% for source_type in event_source_types %}
+                    <option {% if source_type.0 == event.source_money %} selected {%endif%} value="{{source_type.0}}">{{source_type.1}}</option>
+                  {% endfor %}
+                </select>
+                <span class="help-block">{{event.event_type_error_message}}</span>
+              </div>
+            </div>
+
+            <div class="form-group {% if event.amount_error_message %}has-error {% endif %}">
+              <label class="col-sm-2 control-label">Amount</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" placeholder="Amount" name="amount" value="{{event.amount}}">
+                <span class="help-block">{{event.amount_error_message}}</span>
+              </div>
+            </div>
+            <div class="form-group {% if event.member_join_error_message %}has-error {% endif %}">
+              <label class="col-sm-2 control-label">Members</label>
+              <div class="col-sm-10">
+                <div class="checkbox">
+                  {% for member in event.group.members.all %}
+                  <label style="padding-right: 10px">
+                    <input name="member_joins" {% if member.id in event.member_join_list %}checked{% endif %} type="checkbox" value="{{ member.id }}">
+                    {{ member.userprofile.name }}
+                  </label>
+                  {% endfor %}
+                  <span class="help-block">{{event.member_join_error_message}}</span>
+                </div>
+              </div>
+            </div>
+
+
+            {% if not event.id %}
+            <div class="">
+              <button type="submit" class="btn btn-info pull-right">Submit</button>
+            </div>
+            {% endif %}
+          </div>
+
+        </form>
+          <div class="box-body">
+          <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+            <div class="row">
+              <div class="col-sm-12">
+                <table id="example1" class="table table-bordered table-striped dataTable" role="grid"
+                       aria-describedby="example1_info">
+                  <thead>
+                  <tr role="row">
+                    {% for header in header_texts %}
+                    <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
+                        aria-label="Rendering engine: activate to sort column descending" aria-sort="ascending"
+                    >{{ header }}
+                    </th>
+                    {% endfor %}
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {% for transaction in event_transactions %}
+                  <tr role="row">
+                    <td><a href="">{{ transaction|format_payer }}</a></td>
+                    <td>{{ transaction.amount|floatformat:"0"|intcomma}} VND</td>
+                    <td>{{ transaction.description}}</td>
+                    <td>{{ transaction.status|format_transaction_status}}</td>
+                    <td>
+                    {% if transaction.status %}
+                      {{ transaction.paid_at }}
+                    {% else %}
+                      {% if transaction.user and request.user.is_superuser%}
+                      <form method="POST" action="{% url 'admin_v1:paid_transaction' transaction_id=transaction.id%}">
+                        {% csrf_token %}
+                        <input class="hidden" name="transaction_id" value="{{transaction.id}}">
+                        <input class="hidden" name="redirect_url" value="{{ request.get_full_path }}">
+                        <button type="submit" class="btn btn-primary pull-right" style="margin-right: 5px;">
+                          Paid
+                        </button>
+                      </form>
+                      {% endif %}
+                    {% endif %}
+                  </td>
+                  </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+          <!-- /.box-body -->
+          <!-- /.box-footer -->
+
+      </div>
+
+    </div>
+    <!-- /.col -->
+  </div>
+  <!-- /.row -->
+</section>
+
+{% endblock %}

@@ -1,0 +1,35 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+  {% include 'base/head.html' %}
+  <body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+      {% include 'base/header.html' %}
+      {% include 'base/right-nav.html' %}
+      <div class="content-wrapper">
+        <section class="content-header">
+          {% block page-title %}
+          <h1>
+            Dashboard
+            <small>Control panel</small>
+          </h1>
+          {% endblock %}
+          {% block breadcrumb %}
+          <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Dashboard</li>
+          </ol>
+          {% endblock %}
+
+        </section>
+        {% block pagecontent %}
+        {% endblock %}
+      </div>
+      {% include 'base/footer.html' %}
+    </div>
+  </body>
+</html>
+{% block javascript %}
+
+{% endblock %}
