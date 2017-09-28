@@ -67,7 +67,7 @@ LOGGING = {
     }
 }
 
-STATIC_URL = '/static/'
+STATIC_URL = '/expense/static/'
 
 # Add these new lines
 STATICFILES_DIRS = (
@@ -83,6 +83,7 @@ CONFIG_FILE_DIR = config.get("django", "config_file_path")
 SALT_EMAIL_VALIDATE = config.get("django", "salt_email_validate")
 EMAIL_VALIDATE_EXPIRATION = config.getint("django", "email_validate_expiration")
 BASE_URL = config.get("django", "base_url")
+FORCE_SCRIPT_NAME = config.get("django", "force_script_name")
 
 FILE_UPLOAD_HANDLERS = ("django_excel.ExcelMemoryFileUploadHandler",
                         "django_excel.TemporaryExcelFileUploadHandler")
