@@ -17,7 +17,9 @@ NO_DEBT = u"Anh ah, không ai nợ. Anh yên đi nhé! :blush:"
 HAS_DEBT = u"Anh ah, có %s bác đang nợ. Em báo lên group anh nhé! :blush:"
 NOT_FOUND_USER = u"Anh ơi, em không tìm anh này. Anh check lại giúp em với! :blush:"
 NOT_DEBT_USER = u"Anh ơi, anh không nợ gì cả đâu ạ. Hiện tại anh còn %s VND! :blush:"
+NOT_DEBT_OTHER_USER = u"Anh %s không nợ gì cả đâu ạ. Hiện tại anh ấy còn %s VND! :blush:"
 DEBT_USER = u"Anh đang còn nợ %s VND. Anh trả tiền ngay nhé :blush:"
+DEBT_OTHER_USER = u"Anh %s đang còn nợ %s VND. Anh nhắc anh ấy giúp em nhé :blush:"
 
 class DebtStatistic(APIView):
     """
@@ -27,8 +29,8 @@ class DebtStatistic(APIView):
 
     def get(self, request, format=None):
         debt_statistic = []
-        response_text = ""
-        detail = request.GET("text")
+        detail = request.GET.get("text")
+        request_user = request.GET.get("user_id")
         if not detail:
             for user_profile in UserProfile.objects.all():
                 if user_profile.account_balance < 0:
@@ -43,10 +45,16 @@ class DebtStatistic(APIView):
                 user_profile = UserProfile.objects.get(name=detail)
             except Exception:
                 response_text = NOT_FOUND_USER
-            if user_profile.unpaid_transactions.count() == 0:
-                response_text = NOT_DEBT_USER % format_amount(abs(user_profile.account_balance))
+            if user_profile.unpaid_transactions().count() == 0:
+                if user_profile.slack_id == request_user:
+                    response_text = NOT_DEBT_USER % format_amount(abs(user_profile.account_balance))
+                else:
+                    response_text = NOT_DEBT_OTHER_USER % (user_profile.slack_id, format_amount(abs(user_profile.account_balance)))
             else:
-                response_text = DEBT_USER % format_amount(abs(user_profile.account_balance))
+                if user_profile.slack_id == request_user:
+                    response_text = DEBT_USER % format_amount(abs(user_profile.account_balance))
+                else:
+                    response_text = DEBT_OTHER_USER % (user_profile.slack_id, format_amount(abs(user_profile.account_balance)))
 
         data_send = {"text": response_text, "link_names": 1}
         return Response(data_send)
