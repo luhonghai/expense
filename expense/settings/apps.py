@@ -21,5 +21,6 @@ INSTALLED_APPS += [
 INSTALLED_APPS += [
     'apps.mobile_api',
     'apps.admin_v1',
+    'apps.slack_hook',
     'django_crontab'
 ]

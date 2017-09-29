@@ -5,3 +5,4 @@ from .templates import *  # NOQA
 from .apps import *  # NOQA
 from .logs import *
 from .mailgun import *
+from .django import *
