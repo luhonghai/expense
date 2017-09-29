@@ -44,18 +44,18 @@ class DebtStatistic(APIView):
         else:
             try:
                 user_profile = UserProfile.objects.get(name=detail)
+                if user_profile.unpaid_transactions().count() == 0:
+                    if user_profile.slack_id == request_user:
+                        response_text = NOT_DEBT_USER % format_amount(abs(user_profile.account_balance))
+                    else:
+                        response_text = NOT_DEBT_OTHER_USER % (user_profile.slack_id, format_amount(abs(user_profile.account_balance)))
+                else:
+                    if user_profile.slack_id == request_user:
+                        response_text = DEBT_USER % format_amount(abs(user_profile.account_balance))
+                    else:
+                        response_text = DEBT_OTHER_USER % (user_profile.slack_id, format_amount(abs(user_profile.account_balance)))
             except Exception:
                 response_text = NOT_FOUND_USER
-            if user_profile.unpaid_transactions().count() == 0:
-                if user_profile.slack_id == request_user:
-                    response_text = NOT_DEBT_USER % format_amount(abs(user_profile.account_balance))
-                else:
-                    response_text = NOT_DEBT_OTHER_USER % (user_profile.slack_id, format_amount(abs(user_profile.account_balance)))
-            else:
-                if user_profile.slack_id == request_user:
-                    response_text = DEBT_USER % format_amount(abs(user_profile.account_balance))
-                else:
-                    response_text = DEBT_OTHER_USER % (user_profile.slack_id, format_amount(abs(user_profile.account_balance)))
 
         data_send = {"text": response_text, "link_names": 1}
         return Response(data_send)
