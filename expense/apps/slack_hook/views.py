@@ -23,4 +23,4 @@ class DebtStatistic(APIView):
             if user_profile.account_balance < 0:
                 debt_statistic[user_profile.name, user_profile.account_balance]
         SlackWebHook.send_debt_notifications(debt_statistic=debt_statistic)
-        return Response({})
+        return Response({"text": "OK"})
