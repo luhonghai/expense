@@ -14,12 +14,13 @@ from libs.slack_webhook import SlackWebHook
 
 
 NO_DEBT = u"Anh ah, không ai nợ. Anh yên đi nhé! :blush:"
-HAS_DEBT = u"Anh ah, có %s bác đang nợ. Em báo lên group anh nhé! :blush:"
+HAS_DEBT = u"Anh ah, có %s bác đang nợ. Em báo lên group rồi anh nhé! :blush:"
 NOT_FOUND_USER = u"Anh ơi, em không tìm anh này. Anh check lại giúp em với! :blush:"
 NOT_DEBT_USER = u"Anh ơi, anh không nợ gì cả đâu ạ. Hiện tại anh còn %s VND! :blush:"
-NOT_DEBT_OTHER_USER = u"Anh @%s không nợ gì cả đâu ạ. Hiện tại anh ấy còn %s VND! :blush:"
+NOT_DEBT_OTHER_USER = u"Anh <@%s> không nợ gì cả đâu ạ. Hiện tại anh ấy còn %s VND! :blush:"
 DEBT_USER = u"Anh đang còn nợ %s VND. Anh trả tiền ngay nhé :blush:"
-DEBT_OTHER_USER = u"Anh @%s đang còn nợ %s VND. Anh nhắc anh ấy giúp em nhé :blush:"
+DEBT_OTHER_USER = u"Anh <@%s> đang còn nợ %s VND. Anh nhắc anh ấy giúp em nhé :blush:"
+
 
 class DebtStatistic(APIView):
     """
