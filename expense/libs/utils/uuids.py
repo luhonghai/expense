@@ -20,4 +20,4 @@ import locale
 def format_amount(amount):
     locale.setlocale(locale.LC_ALL, '')
     locale._override_localeconv = {'mon_thousands_sep': '.'}
-    return locale.format('%f', int(amount), grouping=True, monetary=True)
+    return locale.format('%d', int(amount), grouping=True, monetary=True)

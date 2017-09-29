@@ -30,7 +30,7 @@ class SlackWebHook(object):
         for debt in debt_statistic:
             attachments.append({
               "color": "#FF0000",
-              "text": u"<@%s> ơi, anh còn thiếu %s VND nè! Đóng luôn đi anh. Ahihi" %(debt[0],format_amount(abs(debt[1]))),
+              "text": u"<@%s> ơi, anh còn thiếu %s VND nè! Đóng luôn đi anh. Ahihi" %(debt[0], format_amount(abs(debt[1]))),
               "fields": []
             })
         requests.post(url=debt_slack_hook, json=data_send)

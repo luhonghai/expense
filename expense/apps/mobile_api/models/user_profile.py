@@ -20,6 +20,7 @@ class UserProfile(BaseUserModel):
     email = models.EmailField(default="")
     name = models.CharField(default="", max_length=255)
     credit = models.DecimalField(default=0.0, max_digits=10, decimal_places=2)
+    slack_id = models.TextField(default="", null=True)
 
     def unpaid_transactions(self):
         from .transaction import Transaction
