@@ -31,7 +31,7 @@ class UserProfile(BaseUserModel):
         )
 
     def all_transactions(self, limit=None):
-        transactions = self.user.transactions.all()
+        transactions = self.user.transactions.all().order_by("-created_at")
         if limit:
             transactions = transactions[:limit]
         return transactions

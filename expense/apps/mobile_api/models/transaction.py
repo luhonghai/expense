@@ -63,7 +63,7 @@ class Transaction(BaseModel):
                 self.group.save()
                 self.group.collect_debt()
             SlackWebHook.send_notifications(
-                text=u"%s : %s" %(self.description, format_amount(self.amount))
+                text=u"%s : %s VND" %(self.description, format_amount(self.amount))
             )
 
     @classmethod
@@ -114,7 +114,7 @@ class Transaction(BaseModel):
                 group.save()
             try:
                 SlackWebHook.send_notifications(
-                    text="%s : %s" %(description, amount)
+                    text="%s : %s VND" %(description, amount)
                 )
             except Exception:
                 pass
@@ -139,7 +139,7 @@ class Transaction(BaseModel):
             paid_transaction.paid_at = timezone.now()
             try:
                 SlackWebHook.send_notifications(
-                    text="%s : %s" %(description, amount)
+                    text="%s : %s VND" %(description, amount)
                 )
             except Exception:
                 pass
@@ -158,7 +158,7 @@ class Transaction(BaseModel):
         self.paid_at = timezone.now()
         try:
             SlackWebHook.send_notifications(
-                text="%s : %s" %(self.description, self.amount)
+                text="%s : %s VND" %(self.description, self.amount)
             )
         except Exception:
             pass
