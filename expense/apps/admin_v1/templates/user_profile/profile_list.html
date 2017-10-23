@@ -57,7 +57,7 @@
                     <td>{{ profile.account_balance|floatformat:"0"|intcomma }}</td>
                     <td width="20%">
                       {% if request.user.is_superuser %}
-                      <form method="POST"">
+                      <form method="POST">
                         {% csrf_token %}
                         <div class="input-group">
                           <input name="amount" type="text" class="form-control" placeholder="Amount ">

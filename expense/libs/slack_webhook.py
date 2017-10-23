@@ -34,3 +34,21 @@ class SlackWebHook(object):
               "fields": []
             })
         requests.post(url=debt_slack_hook, json=data_send)
+
+    @classmethod
+    def generate_history_notifications(cls, transactions):
+        if not transactions:
+            return True
+        attachments = []
+        data_send = {
+          "link_names": 1,
+          "attachments": attachments
+        }
+
+        for transaction in transactions:
+            attachments.append({
+              "color": "#FF0000",
+              "text": "%s : %s" %(transaction.description, format_amount(abs(transaction.amount))),
+              "fields": []
+            })
+        return data_send

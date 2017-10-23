@@ -20,6 +20,7 @@ NOT_DEBT_USER = u"Anh ơi, anh không nợ gì cả đâu ạ. Hiện tại anh 
 NOT_DEBT_OTHER_USER = u"Anh <@%s> không nợ gì cả đâu ạ. Hiện tại anh ấy còn %s VND! :blush:"
 DEBT_USER = u"Anh đang còn nợ %s VND. Anh trả tiền ngay nhé :blush:"
 DEBT_OTHER_USER = u"Anh <@%s> đang còn nợ %s VND. Anh nhắc anh ấy giúp em nhé :blush:"
+NUMBER_HISTORY_INVALID = u"Anh <@%s> ơi, anh vui lòng điền số sau history giúp em với nhé. :blush:"
 
 
 class DebtStatistic(APIView):
@@ -42,20 +43,31 @@ class DebtStatistic(APIView):
             else:
                 response_text = NO_DEBT
         else:
-            try:
-                user_profile = UserProfile.objects.get(name=detail)
-                if user_profile.unpaid_transactions().count() == 0:
-                    if user_profile.slack_id == request_user:
-                        response_text = NOT_DEBT_USER % format_amount(abs(user_profile.account_balance))
+            if "history" in detail:
+                try:
+                    num_of_history = int(detail.split(" ")[1].strip())
+                    user_profile = UserProfile.objects.get(slack_id=request_user)
+                    all_transactions = user_profile.all_transactions(limit=num_of_history)
+                    data_send = SlackWebHook.generate_history_notifications(transactions=all_transactions)
+                    return Response(data_send)
+                except Exception:
+                    response_text = NUMBER_HISTORY_INVALID %request_user
+
+            else:
+                try:
+                    user_profile = UserProfile.objects.get(name=detail)
+                    if user_profile.unpaid_transactions().count() == 0:
+                        if user_profile.slack_id == request_user:
+                            response_text = NOT_DEBT_USER % format_amount(abs(user_profile.account_balance))
+                        else:
+                            response_text = NOT_DEBT_OTHER_USER % (user_profile.slack_id, format_amount(abs(user_profile.account_balance)))
                     else:
-                        response_text = NOT_DEBT_OTHER_USER % (user_profile.slack_id, format_amount(abs(user_profile.account_balance)))
-                else:
-                    if user_profile.slack_id == request_user:
-                        response_text = DEBT_USER % format_amount(abs(user_profile.account_balance))
-                    else:
-                        response_text = DEBT_OTHER_USER % (user_profile.slack_id, format_amount(abs(user_profile.account_balance)))
-            except Exception:
-                response_text = NOT_FOUND_USER
+                        if user_profile.slack_id == request_user:
+                            response_text = DEBT_USER % format_amount(abs(user_profile.account_balance))
+                        else:
+                            response_text = DEBT_OTHER_USER % (user_profile.slack_id, format_amount(abs(user_profile.account_balance)))
+                except Exception:
+                    response_text = NOT_FOUND_USER
 
         data_send = {"text": response_text, "link_names": 1}
         return Response(data_send)

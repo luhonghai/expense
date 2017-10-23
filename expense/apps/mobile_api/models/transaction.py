@@ -85,9 +85,12 @@ class Transaction(BaseModel):
         if kwargs.has_key("event_id"):
             added_transaction.event_id = kwargs.get("event_id")
         added_transaction.save()
-        SlackWebHook.send_notifications(
-            text=u"@%s nạp %s VND vào tài khoản" %(user.userprofile.name, format_amount(amount))
-        )
+        try:
+            SlackWebHook.send_notifications(
+                text=u"@%s nạp %s VND vào tài khoản" %(user.userprofile.slack_id, format_amount(amount))
+            )
+        except Exception:
+            pass
         return added_transaction
 
     @classmethod
@@ -109,9 +112,12 @@ class Transaction(BaseModel):
             if paid_group:
                 group.credit += amount
                 group.save()
-            SlackWebHook.send_notifications(
-                text="%s : %s" %(description, amount)
-            )
+            try:
+                SlackWebHook.send_notifications(
+                    text="%s : %s" %(description, amount)
+                )
+            except Exception:
+                pass
         if kwargs.has_key("event_id"):
             paid_transaction.event_id = kwargs.get("event_id")
         paid_transaction.save()
@@ -131,9 +137,12 @@ class Transaction(BaseModel):
             group.save()
             paid_transaction.status = cls.COMPLETED
             paid_transaction.paid_at = timezone.now()
-            SlackWebHook.send_notifications(
-                text="%s : %s" %(description, amount)
-            )
+            try:
+                SlackWebHook.send_notifications(
+                    text="%s : %s" %(description, amount)
+                )
+            except Exception:
+                pass
         paid_transaction.save()
 
     def paid_group_pending(self):
@@ -147,9 +156,12 @@ class Transaction(BaseModel):
         self.group.save()
         self.status = self.COMPLETED
         self.paid_at = timezone.now()
-        SlackWebHook.send_notifications(
-            text="@%s paid %s VND - %s" %(self.user.userprofile.name, format_amount(self.amount), self.description)
-        )
+        try:
+            SlackWebHook.send_notifications(
+                text="%s : %s" %(self.description, self.amount)
+            )
+        except Exception:
+            pass
         self.save()
 
 

@@ -1,0 +1,10 @@
+ version: '2'
+ services:
+   expense:
+     build:
+        context: .
+        dockerfile: Dockerfile
+     volumes:
+       - .:/usr/local/expense
+     ports:
+       - "8000:8000"

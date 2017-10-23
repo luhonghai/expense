@@ -30,6 +30,12 @@ class UserProfile(BaseUserModel):
             status=Transaction.PENDING
         )
 
+    def all_transactions(self, limit=None):
+        transactions = self.user.transactions.all()
+        if limit:
+            transactions = transactions[:limit]
+        return transactions
+
     @property
     def account_balance(self):
         unpaid_money = 0
