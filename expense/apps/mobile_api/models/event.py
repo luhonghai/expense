@@ -40,7 +40,7 @@ class Event(BaseModel):
                 Transaction.create_user_paid_transaction(
                     user=user,
                     amount=self.amount,
-                    description=u"@%s đóng tiền vào quỹ '%s' cho event '%s'" %(user.userprofile.slack_id, self.group.name, self.description),
+                    description=u"<@%s> đóng tiền vào quỹ '%s' cho event '%s'" %(user.userprofile.slack_id, self.group.name, self.description),
                     group=self.group,
                     paid_group=True,
                     event_id=self.id
@@ -49,7 +49,7 @@ class Event(BaseModel):
             if self.source_money == self.SOURCE_GROUP:
                 Transaction.create_group_paid_transaction(
                     amount=self.amount,
-                    description=u"%s trả tiền cho event '%s'" %(self.group.name, self.description),
+                    description=u"<@%s> trả tiền cho event '%s'" %(self.group.name, self.description),
                     group=self.group,
                     event=self
                 )
@@ -58,7 +58,7 @@ class Event(BaseModel):
                     Transaction.create_user_paid_transaction(
                         user=user,
                         amount=self.amount,
-                        description=u"@%s trả tiền cho event '%s' của '%s'" %(user.userprofile.slack_id, self.description, self.group.name),
+                        description=u"<@%s> trả tiền cho event '%s' của '%s'" %(user.userprofile.slack_id, self.description, self.group.name),
                         group=self.group,
                         paid_group=False,
                         event_id=self.id

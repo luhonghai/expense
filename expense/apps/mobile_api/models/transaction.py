@@ -87,7 +87,7 @@ class Transaction(BaseModel):
         added_transaction.save()
         try:
             SlackWebHook.send_notifications(
-                text=u"@%s nạp %s VND vào tài khoản" %(user.userprofile.slack_id, format_amount(amount))
+                text=u"<@%s> nạp %s VND vào tài khoản" %(user.userprofile.slack_id, format_amount(amount))
             )
         except Exception:
             pass
