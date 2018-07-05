@@ -14,12 +14,11 @@ RUN	apt-get -qq update && \
 	ruby
 RUN easy_install pip
 RUN pip install --upgrade pip
-RUN gem install tiller
 WORKDIR /usr/local/expense
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
 ADD . ./
 ADD entrypoint.sh /tmp/entrypoint.sh
 RUN chmod a+x /tmp/entrypoint.sh
-CMD ["/usr/local/bin/tiller" , "-v"]
+CMD ["/tmp/entrypoint.sh"]
 EXPOSE 8000
